@@ -95,10 +95,10 @@ class Playlist
     public function getCategoriesPlaylist() : Collection
     {
         $categories = new ArrayCollection();
-        foreach($this->formations as $formation){
+        foreach ($this->formations as $formation) {
             $categoriesFormation = $formation->getCategories();
-            foreach($categoriesFormation as $categorieFormation) {
-                if(!$categories->contains($categorieFormation->getName())){
+            foreach ($categoriesFormation as $categorieFormation) {
+                if (!$categories->contains($categorieFormation->getName())){
                     $categories[] = $categorieFormation->getName();
                 }
             }

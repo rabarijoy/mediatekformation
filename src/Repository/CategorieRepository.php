@@ -33,7 +33,8 @@ class CategorieRepository extends ServiceEntityRepository
      * @param type $idPlaylist
      * @return array
      */
-    public function findAllForOnePlaylist($idPlaylist): array{
+    public function findAllForOnePlaylist($idPlaylist): array
+    {
         return $this->createQueryBuilder('c')
                 ->join('c.formations', 'f')
                 ->join('f.playlist', 'p')
