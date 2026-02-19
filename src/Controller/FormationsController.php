@@ -29,7 +29,7 @@ class FormationsController extends AbstractController {
      */
     private $categorieRepository;
 
-    function __construct(FormationRepository $formationRepository, CategorieRepository $categorieRepository) {
+    public function __construct(FormationRepository $formationRepository, CategorieRepository $categorieRepository) {
         $this->formationRepository = $formationRepository;
         $this->categorieRepository= $categorieRepository;
     }
