@@ -19,31 +19,31 @@ class PlaylistsController extends AbstractController {
     private const PLAYLISTS_TEMPLATE = 'pages/playlists.html.twig';
 
     /**
-     * 
+     *
      * @var PlaylistRepository
      */
     private $playlistRepository;
-    
+
     /**
-     * 
+     *
      * @var FormationRepository
      */
     private $formationRepository;
-    
+
     /**
-     * 
+     *
      * @var CategorieRepository
      */
-    private $categorieRepository;    
-    
-    function __construct(PlaylistRepository $playlistRepository, 
+    private $categorieRepository;
+
+    function __construct(PlaylistRepository $playlistRepository,
             CategorieRepository $categorieRepository,
             FormationRepository $formationRespository) {
         $this->playlistRepository = $playlistRepository;
         $this->categorieRepository = $categorieRepository;
         $this->formationRepository = $formationRespository;
     }
-    
+
     /**
      * @Route("/playlists", name="playlists")
      * @return Response
@@ -54,7 +54,7 @@ class PlaylistsController extends AbstractController {
         $categories = $this->categorieRepository->findAll();
         return $this->render(self::PLAYLISTS_TEMPLATE, [
             'playlists' => $playlists,
-            'categories' => $categories            
+            'categories' => $categories
         ]);
     }
 
@@ -71,9 +71,9 @@ class PlaylistsController extends AbstractController {
         $categories = $this->categorieRepository->findAll();
         return $this->render(self::PLAYLISTS_TEMPLATE, [
             'playlists' => $playlists,
-            'categories' => $categories            
+            'categories' => $categories
         ]);
-    }          
+    }
 
     #[Route('/playlists/recherche/{champ}/{table}', name: 'playlists.findallcontain')]
     public function findAllContain($champ, Request $request, $table=""): Response{
@@ -82,11 +82,11 @@ class PlaylistsController extends AbstractController {
         $categories = $this->categorieRepository->findAll();
         return $this->render(self::PLAYLISTS_TEMPLATE, [
             'playlists' => $playlists,
-            'categories' => $categories,            
+            'categories' => $categories,
             'valeur' => $valeur,
             'table' => $table
         ]);
-    }  
+    }
 
     #[Route('/playlists/playlist/{id}', name: 'playlists.showone')]
     public function showOne($id): Response{
@@ -97,7 +97,7 @@ class PlaylistsController extends AbstractController {
             'playlist' => $playlist,
             'playlistcategories' => $playlistCategories,
             'playlistformations' => $playlistFormations
-        ]);        
-    }       
-    
+        ]);
+    }
+
 }

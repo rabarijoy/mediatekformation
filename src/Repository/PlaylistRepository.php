@@ -27,7 +27,7 @@ class PlaylistRepository extends ServiceEntityRepository
         $this->getEntityManager()->remove($entity);
         $this->getEntityManager()->flush();
     }
-    
+
     /**
      * Retourne toutes les playlists triées sur le nom de la playlist
      * @param type $champ
@@ -54,8 +54,8 @@ class PlaylistRepository extends ServiceEntityRepository
     public function findByContainValue($champ, $valeur, $table=""): array{
         if($valeur==""){
             return $this->findAllOrderByName('ASC');
-        }    
-        if($table==""){      
+        }
+        if($table==""){
             return $this->createQueryBuilder('p')
                     ->leftjoin('p.formations', 'f')
                     ->where('p.'.$champ.' LIKE :valeur')
@@ -63,8 +63,8 @@ class PlaylistRepository extends ServiceEntityRepository
                     ->groupBy('p.id')
                     ->orderBy('p.name', 'ASC')
                     ->getQuery()
-                    ->getResult();              
-        }else{   
+                    ->getResult();
+        }else{
             return $this->createQueryBuilder('p')
                     ->leftjoin('p.formations', 'f')
                     ->leftjoin('f.categories', 'c')
@@ -73,8 +73,8 @@ class PlaylistRepository extends ServiceEntityRepository
                     ->groupBy('p.id')
                     ->orderBy('p.name', 'ASC')
                     ->getQuery()
-                    ->getResult();              
-        }           
-    }    
-    
+                    ->getResult();
+        }
+    }
+
 }

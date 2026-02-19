@@ -16,7 +16,7 @@ class Formation
      * Début de chemin vers les images
      */
     private const CHEMIN_IMAGE = "https://i.ytimg.com/vi/";
-        
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -69,9 +69,9 @@ class Formation
         if($this->publishedAt == null){
             return "";
         }
-        return $this->publishedAt->format('d/m/Y');     
-    }      
-    
+        return $this->publishedAt->format('d/m/Y');
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;
@@ -117,7 +117,7 @@ class Formation
     {
         return self::CHEMIN_IMAGE.$this->videoId."/hqdefault.jpg";
     }
-    
+
     public function getPlaylist(): ?playlist
     {
         return $this->playlist;

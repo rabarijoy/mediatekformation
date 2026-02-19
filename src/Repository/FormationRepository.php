@@ -46,7 +46,7 @@ class FormationRepository extends ServiceEntityRepository
                     ->join('f.'.$table, 't')
                     ->orderBy('t.'.$champ, $ordre)
                     ->getQuery()
-                    ->getResult();            
+                    ->getResult();
         }
     }
 
@@ -68,18 +68,18 @@ class FormationRepository extends ServiceEntityRepository
                     ->orderBy('f.publishedAt', 'DESC')
                     ->setParameter('valeur', '%'.$valeur.'%')
                     ->getQuery()
-                    ->getResult();            
+                    ->getResult();
         }else{
             return $this->createQueryBuilder('f')
-                    ->join('f.'.$table, 't')                    
+                    ->join('f.'.$table, 't')
                     ->where('t.'.$champ.' LIKE :valeur')
                     ->orderBy('f.publishedAt', 'DESC')
                     ->setParameter('valeur', '%'.$valeur.'%')
                     ->getQuery()
-                    ->getResult();                   
-        }       
-    }    
-    
+                    ->getResult();
+        }
+    }
+
     /**
      * Retourne les n formations les plus récentes
      * @param type $nb
@@ -88,11 +88,11 @@ class FormationRepository extends ServiceEntityRepository
     public function findAllLasted($nb) : array {
         return $this->createQueryBuilder('f')
                 ->orderBy('f.publishedAt', 'DESC')
-                ->setMaxResults($nb)     
+                ->setMaxResults($nb)
                 ->getQuery()
                 ->getResult();
-    }    
-    
+    }
+
     /**
      * Retourne la liste des formations d'une playlist
      * @param type $idPlaylist
@@ -103,9 +103,9 @@ class FormationRepository extends ServiceEntityRepository
                 ->join('f.playlist', 'p')
                 ->where('p.id=:id')
                 ->setParameter('id', $idPlaylist)
-                ->orderBy('f.publishedAt', 'ASC')   
+                ->orderBy('f.publishedAt', 'ASC')
                 ->getQuery()
-                ->getResult();        
+                ->getResult();
     }
-    
+
 }
