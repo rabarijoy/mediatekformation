@@ -36,10 +36,11 @@ class PlaylistsController extends AbstractController
      */
     private $categorieRepository;
 
-    public function __construct(PlaylistRepository $playlistRepository,
-            CategorieRepository $categorieRepository,
-            FormationRepository $formationRespository)
-    {
+    public function __construct(
+        PlaylistRepository $playlistRepository,
+        CategorieRepository $categorieRepository,
+        FormationRepository $formationRespository
+    ) {
         $this->playlistRepository = $playlistRepository;
         $this->categorieRepository = $categorieRepository;
         $this->formationRepository = $formationRespository;
@@ -63,11 +64,7 @@ class PlaylistsController extends AbstractController
     #[Route('/playlists/tri/{champ}/{ordre}', name: 'playlists.sort')]
     public function sort($champ, $ordre): Response
     {
-        if ($champ === "name") {
-            $playlists = $this->playlistRepository->findAllOrderByName($ordre);
-        } else {
-            $playlists = $this->playlistRepository->findAllOrderByName($ordre);
-        }
+        $playlists = $this->playlistRepository->findAllOrderByName($ordre);
         $categories = $this->categorieRepository->findAll();
         return $this->render(self::PLAYLISTS_TEMPLATE, [
             'playlists' => $playlists,

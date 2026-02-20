@@ -22,7 +22,8 @@ class AccueilController extends AbstractController
      *
      * @param FormationRepository $repository
      */
-    public function __construct(FormationRepository $repository) {
+    public function __construct(FormationRepository $repository)
+    {
         $this->repository = $repository;
     }
 
