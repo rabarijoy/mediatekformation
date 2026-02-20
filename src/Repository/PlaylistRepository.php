@@ -50,33 +50,81 @@ class PlaylistRepository extends ServiceEntityRepository
      * @param type $champ
      * @param type $valeur
      * @param type $table si $champ dans une autre table
+     * @param string $ordre ASC ou DESC pour le tri par nom
      * @return Playlist[]
      */
-    public function findByContainValue($champ, $valeur, $table=""): array
+    public function findByContainValue($champ, $valeur, $table = "", string $ordre = 'ASC'): array
     {
         if ($valeur == "") {
-            return $this->findAllOrderByName('ASC');
+            return $this->findAllOrderByName($ordre);
         }
         if ($table == "") {
             return $this->createQueryBuilder('p')
-                    ->leftjoin('p.formations', 'f')
+                    ->leftJoin('p.formations', 'f')
                     ->where('p.'.$champ.' LIKE :valeur')
                     ->setParameter('valeur', '%'.$valeur.'%')
                     ->groupBy('p.id')
-                    ->orderBy('p.name', 'ASC')
+                    ->orderBy('p.name', $ordre)
                     ->getQuery()
                     ->getResult();
         } else {
             return $this->createQueryBuilder('p')
-                    ->leftjoin('p.formations', 'f')
-                    ->leftjoin('f.categories', 'c')
+                    ->leftJoin('p.formations', 'f')
+                    ->leftJoin('f.categories', 'c')
                     ->where('c.'.$champ.' LIKE :valeur')
                     ->setParameter('valeur', '%'.$valeur.'%')
                     ->groupBy('p.id')
-                    ->orderBy('p.name', 'ASC')
+                    ->orderBy('p.name', $ordre)
                     ->getQuery()
                     ->getResult();
         }
     }
 
+    /**
+     * Même filtre que findByContainValue mais tri par nombre de formations
+     * @return Playlist[]
+     */
+    public function findByContainValueOrderByNombreFormations(string $champ, string $valeur, string $table, string $ordre): array
+    {
+        if ($valeur === "") {
+            return $this->findAllOrderByNombreFormations($ordre);
+        }
+        if ($table === "") {
+            return $this->createQueryBuilder('p')
+                    ->leftJoin('p.formations', 'f')
+                    ->where('p.'.$champ.' LIKE :valeur')
+                    ->setParameter('valeur', '%'.$valeur.'%')
+                    ->groupBy('p.id')
+                    ->addSelect('COUNT(f.id) AS HIDDEN nbFormations')
+                    ->orderBy('nbFormations', $ordre)
+                    ->getQuery()
+                    ->getResult();
+        } else {
+            return $this->createQueryBuilder('p')
+                    ->leftJoin('p.formations', 'f')
+                    ->leftJoin('f.categories', 'c')
+                    ->where('c.'.$champ.' LIKE :valeur')
+                    ->setParameter('valeur', '%'.$valeur.'%')
+                    ->groupBy('p.id')
+                    ->addSelect('COUNT(f.id) AS HIDDEN nbFormations')
+                    ->orderBy('nbFormations', $ordre)
+                    ->getQuery()
+                    ->getResult();
+        }
+    }
+
+    /**
+     * Retourne toutes les playlists triées par nombre de formations
+     * @return Playlist[]
+     */
+    public function findAllOrderByNombreFormations(string $ordre): array
+    {
+        return $this->createQueryBuilder('p')
+                ->leftJoin('p.formations', 'f')
+                ->groupBy('p.id')
+                ->addSelect('COUNT(f.id) AS HIDDEN nbFormations')
+                ->orderBy('nbFormations', $ordre)
+                ->getQuery()
+                ->getResult();
+    }
 }

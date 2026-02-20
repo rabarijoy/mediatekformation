@@ -6,8 +6,8 @@
             <tr>
                 <th class="text-left align-top" scope="col">
                     playlist<br />
-                    <a href="{{ path('playlists.sort', {champ:'name', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
-                    <a href="{{ path('playlists.sort', {champ:'name', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
+                    <a href="{{ path('playlists.sort', {champ:'name', ordre:'ASC'}) }}{% if valeur|default('') != '' or table|default('') != '' %}?recherche={{ valeur|default('') }}&champ={{ champ|default('name') }}&table={{ table|default('') }}{% endif %}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
+                    <a href="{{ path('playlists.sort', {champ:'name', ordre:'DESC'}) }}{% if valeur|default('') != '' or table|default('') != '' %}?recherche={{ valeur|default('') }}&champ={{ champ|default('name') }}&table={{ table|default('') }}{% endif %}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
                     <form class="form-inline mt-1" method="POST" action="{{ path('playlists.findallcontain', {champ:'name'}) }}">
                         <div class="form-group mr-1 mb-2">
                             <input type="text" class="sm" name="recherche" 
@@ -34,6 +34,11 @@
                     </form>            
                 </th>
                 <th class="text-center align-top" scope="col">
+                    nombre de formations
+                    <a href="{{ path('playlists.sort.nombreformations', {ordre:'ASC'}) }}{% if valeur|default('') != '' or table|default('') != '' %}?recherche={{ valeur|default('') }}&champ={{ champ|default('name') }}&table={{ table|default('') }}{% endif %}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
+                    <a href="{{ path('playlists.sort.nombreformations', {ordre:'DESC'}) }}{% if valeur|default('') != '' or table|default('') != '' %}?recherche={{ valeur|default('') }}&champ={{ champ|default('name') }}&table={{ table|default('') }}{% endif %}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
+                </th>
+                <th class="text-center align-top" scope="col">
                     &nbsp;
                 </th>				
             </tr>
@@ -56,6 +61,9 @@
                                 {% endfor %}
                             {% endif %}
                         </td>            					
+                        <td class="text-center">
+                            {{ playlists[k].nombreformations }}
+                        </td>
                         <td class="text-center">
                             <a href="{{ path('playlists.showone', {id:playlists[k].id}) }}" class="btn btn-secondary">Voir détail</a>
                         </td> 					

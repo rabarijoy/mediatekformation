@@ -61,28 +61,59 @@ class PlaylistsController extends AbstractController
         ]);
     }
 
-    #[Route('/playlists/tri/{champ}/{ordre}', name: 'playlists.sort')]
-    public function sort($champ, $ordre): Response
+    #[Route('/playlists/tri/nombreformations/{ordre}', name: 'playlists.sort.nombreformations', requirements: ['ordre' => 'ASC|DESC'])]
+    public function sortByNombreFormations(string $ordre, Request $request): Response
     {
-        $playlists = $this->playlistRepository->findAllOrderByName($ordre);
-        $categories = $this->categorieRepository->findAll();
-        return $this->render(self::PLAYLISTS_TEMPLATE, [
-            'playlists' => $playlists,
-            'categories' => $categories
-        ]);
-    }
-
-    #[Route('/playlists/recherche/{champ}/{table}', name: 'playlists.findallcontain')]
-    public function findAllContain($champ, Request $request, $table=""): Response
-    {
-        $valeur = $request->get("recherche");
-        $playlists = $this->playlistRepository->findByContainValue($champ, $valeur, $table);
+        $valeur = $request->query->get('recherche', '');
+        $champ = $request->query->get('champ', 'name');
+        $table = $request->query->get('table', '');
+        if ($valeur !== '' || $table !== '') {
+            $playlists = $this->playlistRepository->findByContainValueOrderByNombreFormations($champ, $valeur, $table, $ordre);
+        } else {
+            $playlists = $this->playlistRepository->findAllOrderByNombreFormations($ordre);
+        }
         $categories = $this->categorieRepository->findAll();
         return $this->render(self::PLAYLISTS_TEMPLATE, [
             'playlists' => $playlists,
             'categories' => $categories,
             'valeur' => $valeur,
-            'table' => $table
+            'table' => $table,
+            'champ' => $champ,
+        ]);
+    }
+
+    #[Route('/playlists/tri/{champ}/{ordre}', name: 'playlists.sort')]
+    public function sort(string $champ, string $ordre, Request $request): Response
+    {
+        $valeur = $request->query->get('recherche', '');
+        $table = $request->query->get('table', '');
+        if ($valeur !== '' || $table !== '') {
+            $playlists = $this->playlistRepository->findByContainValue($champ, $valeur, $table, $ordre);
+        } else {
+            $playlists = $this->playlistRepository->findAllOrderByName($ordre);
+        }
+        $categories = $this->categorieRepository->findAll();
+        return $this->render(self::PLAYLISTS_TEMPLATE, [
+            'playlists' => $playlists,
+            'categories' => $categories,
+            'valeur' => $valeur,
+            'table' => $table,
+            'champ' => $champ,
+        ]);
+    }
+
+    #[Route('/playlists/recherche/{champ}/{table}', name: 'playlists.findallcontain')]
+    public function findAllContain($champ, Request $request, $table = ""): Response
+    {
+        $valeur = $request->get("recherche") ?? '';
+        $playlists = $this->playlistRepository->findByContainValue($champ, $valeur, $table, 'ASC');
+        $categories = $this->categorieRepository->findAll();
+        return $this->render(self::PLAYLISTS_TEMPLATE, [
+            'playlists' => $playlists,
+            'categories' => $categories,
+            'valeur' => $valeur,
+            'table' => $table,
+            'champ' => $champ,
         ]);
     }
 
