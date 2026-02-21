@@ -16,12 +16,22 @@ class PlaylistRepository extends ServiceEntityRepository
         parent::__construct($registry, Playlist::class);
     }
 
+    /**
+     * Persiste une playlist en base de données.
+     * @param Playlist $entity
+     * @return void
+     */
     public function add(Playlist $entity): void
     {
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Supprime une playlist de la base de données.
+     * @param Playlist $entity
+     * @return void
+     */
     public function remove(Playlist $entity): void
     {
         $this->getEntityManager()->remove($entity);
@@ -30,8 +40,7 @@ class PlaylistRepository extends ServiceEntityRepository
 
     /**
      * Retourne toutes les playlists triées sur le nom de la playlist
-     * @param type $champ
-     * @param type $ordre
+     * @param string $ordre
      * @return Playlist[]
      */
     public function findAllOrderByName($ordre): array
@@ -47,9 +56,9 @@ class PlaylistRepository extends ServiceEntityRepository
     /**
      * Enregistrements dont un champ contient une valeur
      * ou tous les enregistrements si la valeur est vide
-     * @param type $champ
-     * @param type $valeur
-     * @param type $table si $champ dans une autre table
+     * @param string $champ
+     * @param string $valeur
+     * @param string $table si $champ dans une autre table
      * @param string $ordre ASC ou DESC pour le tri par nom
      * @return Playlist[]
      */
@@ -82,6 +91,10 @@ class PlaylistRepository extends ServiceEntityRepository
 
     /**
      * Même filtre que findByContainValue mais tri par nombre de formations
+     * @param string $champ
+     * @param string $valeur
+     * @param string $table si $champ dans une autre table
+     * @param string $ordre ASC ou DESC
      * @return Playlist[]
      */
     public function findByContainValueOrderByNombreFormations(string $champ, string $valeur, string $table, string $ordre): array
@@ -115,6 +128,7 @@ class PlaylistRepository extends ServiceEntityRepository
 
     /**
      * Retourne toutes les playlists triées par nombre de formations
+     * @param string $ordre ASC ou DESC
      * @return Playlist[]
      */
     public function findAllOrderByNombreFormations(string $ordre): array

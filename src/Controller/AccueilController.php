@@ -27,6 +27,10 @@ class AccueilController extends AbstractController
         $this->repository = $repository;
     }
 
+    /**
+     * Affiche la page d'accueil avec les dernières formations.
+     * @return Response
+     */
     #[Route('/', name: 'accueil')]
     public function index(): Response
     {
@@ -36,6 +40,10 @@ class AccueilController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche la page des conditions générales d'utilisation.
+     * @return Response
+     */
     #[Route('/cgu', name: 'cgu')]
     public function cgu(): Response
     {

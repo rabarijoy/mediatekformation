@@ -36,6 +36,11 @@ class PlaylistsController extends AbstractController
      */
     private $categorieRepository;
 
+    /**
+     * @param PlaylistRepository $playlistRepository
+     * @param CategorieRepository $categorieRepository
+     * @param FormationRepository $formationRespository
+     */
     public function __construct(
         PlaylistRepository $playlistRepository,
         CategorieRepository $categorieRepository,
@@ -61,6 +66,12 @@ class PlaylistsController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche les playlists triées par nombre de formations.
+     * @param string $ordre
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/playlists/tri/nombreformations/{ordre}', name: 'playlists.sort.nombreformations', requirements: ['ordre' => 'ASC|DESC'])]
     public function sortByNombreFormations(string $ordre, Request $request): Response
     {
@@ -82,6 +93,13 @@ class PlaylistsController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche les playlists triées sur un champ.
+     * @param string $champ
+     * @param string $ordre
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/playlists/tri/{champ}/{ordre}', name: 'playlists.sort')]
     public function sort(string $champ, string $ordre, Request $request): Response
     {
@@ -102,6 +120,13 @@ class PlaylistsController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche les playlists dont un champ contient la valeur recherchée.
+     * @param string $champ
+     * @param Request $request
+     * @param string $table
+     * @return Response
+     */
     #[Route('/playlists/recherche/{champ}/{table}', name: 'playlists.findallcontain')]
     public function findAllContain($champ, Request $request, $table = ""): Response
     {
@@ -117,6 +142,11 @@ class PlaylistsController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche le détail d'une playlist avec ses formations et catégories.
+     * @param int $id
+     * @return Response
+     */
     #[Route('/playlists/playlist/{id}', name: 'playlists.showone')]
     public function showOne($id): Response
     {

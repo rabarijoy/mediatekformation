@@ -29,12 +29,20 @@ class FormationsController extends AbstractController
      */
     private $categorieRepository;
 
+    /**
+     * @param FormationRepository $formationRepository
+     * @param CategorieRepository $categorieRepository
+     */
     public function __construct(FormationRepository $formationRepository, CategorieRepository $categorieRepository)
     {
         $this->formationRepository = $formationRepository;
         $this->categorieRepository= $categorieRepository;
     }
 
+    /**
+     * Affiche la liste de toutes les formations.
+     * @return Response
+     */
     #[Route('/formations', name: 'formations')]
     public function index(): Response
     {
@@ -46,6 +54,13 @@ class FormationsController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche la liste des formations triées sur un champ.
+     * @param string $champ
+     * @param string $ordre
+     * @param string $table
+     * @return Response
+     */
     #[Route('/formations/tri/{champ}/{ordre}/{table}', name: 'formations.sort')]
     public function sort($champ, $ordre, $table=""): Response
     {
@@ -57,6 +72,13 @@ class FormationsController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche les formations dont un champ contient la valeur recherchée.
+     * @param string $champ
+     * @param Request $request
+     * @param string $table
+     * @return Response
+     */
     #[Route('/formations/recherche/{champ}/{table}', name: 'formations.findallcontain')]
     public function findAllContain($champ, Request $request, $table=""): Response
     {
@@ -71,6 +93,11 @@ class FormationsController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche le détail d'une formation.
+     * @param int $id
+     * @return Response
+     */
     #[Route('/formations/formation/{id}', name: 'formations.showone')]
     public function showOne($id): Response
     {

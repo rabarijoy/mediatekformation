@@ -10,16 +10,26 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Contrôleur admin pour la gestion des catégories.
+ */
 #[Route('/categories')]
 class CategorieAdminController extends AbstractController
 {
     private const CATEGORIES_TEMPLATE = 'admin/categorie/index.html.twig';
 
+    /**
+     * @param CategorieRepository $categorieRepository
+     */
     public function __construct(
         private readonly CategorieRepository $categorieRepository
     ) {
     }
 
+    /**
+     * Affiche la liste des catégories triées par nom.
+     * @return Response
+     */
     #[Route('/admin', name: 'admin_categories', methods: ['GET'])]
     public function index(): Response
     {
@@ -30,6 +40,12 @@ class CategorieAdminController extends AbstractController
         ]);
     }
 
+    /**
+     * Ajoute une nouvelle catégorie.
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/admin/add', name: 'admin_categorie_add', methods: ['POST'])]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -54,6 +70,13 @@ class CategorieAdminController extends AbstractController
         return $this->redirectToRoute('admin_categories');
     }
 
+    /**
+     * Supprime une catégorie si elle n'est rattachée à aucune formation.
+     * @param int $id
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/admin/{id}/delete', name: 'admin_categorie_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): Response
     {

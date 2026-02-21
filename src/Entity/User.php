@@ -7,15 +7,24 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * Entité représentant un utilisateur administrateur.
+ */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    /**
+     * @var int|null Identifiant unique de l'utilisateur
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    /**
+     * @var string|null Adresse e-mail de l'utilisateur
+     */
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
@@ -31,16 +40,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    /**
+     * Retourne l'identifiant de l'utilisateur.
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * Retourne l'adresse e-mail de l'utilisateur.
+     * @return string|null
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * Définit l'adresse e-mail de l'utilisateur.
+     * @param string $email
+     * @return static
+     */
     public function setEmail(string $email): static
     {
         $this->email = $email;
@@ -90,6 +112,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
+    /**
+     * Définit le mot de passe haché de l'utilisateur.
+     * @param string $password
+     * @return static
+     */
     public function setPassword(string $password): static
     {
         $this->password = $password;
