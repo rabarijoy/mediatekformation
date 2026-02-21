@@ -1,13 +1,30 @@
-{% extends "base.html.twig" %}
+{% extends "baseadmin.html.twig" %}
 {% block title %}Admin - {{ formation.id ? 'Modifier' : 'Nouvelle' }} formation{% endblock %}
 {% block body %}
-    <h1 class="mb-4">{{ formation.id ? 'Modifier' : 'Nouvelle' }} formation</h1>
-
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a href="{{ path('admin_formations') }}" class="btn btn-outline-secondary">Annuler</a>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">{{ formation.id ? 'Modifier la formation' : 'Nouvelle formation' }}</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    {% for field in form %}
+                        {% if field.vars.block_prefixes|first != 'hidden' %}
+                            <div class="mb-3">
+                                {{ form_label(field, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                                {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(field) }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <a href="{{ path('admin_formations') }}" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
     </div>
-    {{ form_end(form) }}
 {% endblock %}
