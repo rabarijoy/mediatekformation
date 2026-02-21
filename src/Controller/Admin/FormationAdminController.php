@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Formation;
 use App\Repository\CategorieRepository;
 use App\Repository\FormationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -61,5 +62,27 @@ class FormationAdminController extends AbstractController
             'formations' => $formations,
             'categories' => $categories,
         ]);
+    }
+
+    #[Route('/formations/{id}/edit', name: 'admin_formation_edit', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function edit(int $id): Response
+    {
+        return $this->redirectToRoute('admin_formations');
+    }
+
+    #[Route('/formations/{id}/delete', name: 'admin_formation_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete(int $id, Request $request): Response
+    {
+        $formation = $this->formationRepository->find($id);
+        if (!$formation instanceof Formation) {
+            throw $this->createNotFoundException('Formation non trouvée.');
+        }
+        if (!$this->isCsrfTokenValid('formation_delete_' . $id, $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('admin_formations');
+        }
+        $this->formationRepository->remove($formation);
+        $this->addFlash('success', 'Formation supprimée.');
+        return $this->redirectToRoute('admin_formations');
     }
 }

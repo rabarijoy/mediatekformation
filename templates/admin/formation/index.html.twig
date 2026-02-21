@@ -55,9 +55,7 @@
                     <a href="{{ path('admin_formations', {champ:'publishedAt', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
                     <a href="{{ path('admin_formations', {champ:'publishedAt', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
                 </th>
-                <th class="text-center align-top" scope="col">
-                    &nbsp;
-                </th>
+                <th class="text-center align-top" scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -80,11 +78,11 @@
                         {{ formation.publishedatstring }}
                     </td>
                     <td class="text-center">
-                        {% if formation.miniature %}
-                            <a href="{{ path('formations.showone', {id:formation.id}) }}">
-                                <img src="{{ formation.miniature }}" alt="Miniature de la formation {{ formation.title }}">
-                            </a>
-                        {% endif %}
+                        <a href="{{ path('admin_formation_edit', {id: formation.id}) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                        <form method="post" action="{{ path('admin_formation_delete', {id: formation.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('formation_delete_' ~ formation.id) }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Confirmer la suppression ?');">Supprimer</button>
+                        </form>
                     </td>
                 </tr>
             {% endfor %}
