@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/admin')]
+#[Route('/categories')]
 class CategorieAdminController extends AbstractController
 {
     private const CATEGORIES_TEMPLATE = 'admin/categorie/index.html.twig';
@@ -20,7 +20,7 @@ class CategorieAdminController extends AbstractController
     ) {
     }
 
-    #[Route('/categories', name: 'admin_categories', methods: ['GET'])]
+    #[Route('/admin', name: 'admin_categories', methods: ['GET'])]
     public function index(): Response
     {
         $categories = $this->categorieRepository->findBy([], ['name' => 'ASC']);
@@ -30,7 +30,7 @@ class CategorieAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/categories/add', name: 'admin_categorie_add', methods: ['POST'])]
+    #[Route('/admin/add', name: 'admin_categorie_add', methods: ['POST'])]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
         $name = trim($request->request->get('name', ''));
@@ -54,7 +54,7 @@ class CategorieAdminController extends AbstractController
         return $this->redirectToRoute('admin_categories');
     }
 
-    #[Route('/categories/{id}/delete', name: 'admin_categorie_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/admin/{id}/delete', name: 'admin_categorie_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
         $categorie = $this->categorieRepository->find($id);

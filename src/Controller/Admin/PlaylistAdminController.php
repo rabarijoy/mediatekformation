@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/admin')]
+#[Route('/playlists')]
 class PlaylistAdminController extends AbstractController
 {
     private const PLAYLISTS_TEMPLATE = 'admin/playlist/index.html.twig';
@@ -23,7 +23,7 @@ class PlaylistAdminController extends AbstractController
     ) {
     }
 
-    #[Route('/playlists', name: 'admin_playlists', methods: ['GET'])]
+    #[Route('/admin', name: 'admin_playlists', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $categories = $this->categorieRepository->findAll();
@@ -69,7 +69,7 @@ class PlaylistAdminController extends AbstractController
 
     private const FORM_TEMPLATE = 'admin/playlist/form.html.twig';
 
-    #[Route('/playlists/new', name: 'admin_playlist_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/new', name: 'admin_playlist_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $playlist = new Playlist();
@@ -89,7 +89,7 @@ class PlaylistAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/playlists/{id}/edit', name: 'admin_playlist_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/admin/{id}/edit', name: 'admin_playlist_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
         $playlist = $this->playlistRepository->find($id);
@@ -113,7 +113,7 @@ class PlaylistAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/playlists/{id}/delete', name: 'admin_playlist_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/admin/{id}/delete', name: 'admin_playlist_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
         $playlist = $this->playlistRepository->find($id);
