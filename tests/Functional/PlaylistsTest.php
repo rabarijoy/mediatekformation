@@ -116,4 +116,37 @@ class PlaylistsTest extends WebTestCase
         // Algorithmes = 2 formations → premier en DESC
         $this->assertEquals('Algorithmes', $this->getPremierNom($crawler));
     }
+
+    // ─── FILTRES ─────────────────────────────────────────────────────────────
+
+    public function testFiltreParNomRetourneUnePlaylist(): void
+    {
+        $crawler = $this->client->request('GET', '/playlists');
+        $form = $crawler->selectButton('filtrer')->form(['recherche' => 'Algo']);
+        $crawler = $this->client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(1, $crawler->filter('tbody tr'));
+        $this->assertEquals('Algorithmes', $this->getPremierNom($crawler));
+    }
+
+    public function testFiltreParNomAucunResultat(): void
+    {
+        $crawler = $this->client->request('GET', '/playlists');
+        $form = $crawler->selectButton('filtrer')->form(['recherche' => 'inexistant_xyz']);
+        $crawler = $this->client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(0, $crawler->filter('tbody tr'));
+    }
+
+    public function testFiltreParNomRetourneToutesLesPlaylistsSiVide(): void
+    {
+        $crawler = $this->client->request('GET', '/playlists');
+        $form = $crawler->selectButton('filtrer')->form(['recherche' => '']);
+        $crawler = $this->client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(2, $crawler->filter('tbody tr'));
+    }
 }

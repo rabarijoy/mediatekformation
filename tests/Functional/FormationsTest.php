@@ -115,4 +115,38 @@ class FormationsTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertEquals('Symfony avancé', $this->getPremierTitre($crawler));
     }
+
+    // ─── FILTRES ─────────────────────────────────────────────────────────────
+
+    public function testFiltreParTitreRetourneUnResultat(): void
+    {
+        $crawler = $this->client->request('GET', '/formations');
+        $form = $crawler->selectButton('filtrer')->form(['recherche' => 'Eclipse']);
+        $crawler = $this->client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(1, $crawler->filter('tbody tr'));
+        $this->assertEquals('Eclipse PHP', $this->getPremierTitre($crawler));
+    }
+
+    public function testFiltreParTitreAucunResultat(): void
+    {
+        $crawler = $this->client->request('GET', '/formations');
+        $form = $crawler->selectButton('filtrer')->form(['recherche' => 'inexistant_xyz']);
+        $crawler = $this->client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(0, $crawler->filter('tbody tr'));
+    }
+
+    public function testFiltreParPlaylistRetourneFormationsDeLaPlaylist(): void
+    {
+        $crawler = $this->client->request('GET', '/formations');
+        $form = $crawler->selectButton('filtrer')->eq(1)->form(['recherche' => 'Algorithmes']);
+        $crawler = $this->client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+        // Algorithmes contient 2 formations (Eclipse PHP + Symfony avancé)
+        $this->assertCount(2, $crawler->filter('tbody tr'));
+    }
 }
