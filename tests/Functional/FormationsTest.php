@@ -149,4 +149,39 @@ class FormationsTest extends WebTestCase
         // Algorithmes contient 2 formations (Eclipse PHP + Symfony avancé)
         $this->assertCount(2, $crawler->filter('tbody tr'));
     }
+
+    // ─── LIENS ET BOUTONS ────────────────────────────────────────────────────
+
+    public function testLienMiniatureOuvrePageDetailFormation(): void
+    {
+        // Tri par titre ASC pour avoir la première formation de manière déterministe
+        $crawler = $this->client->request('GET', '/formations');
+        $link = $crawler->filter('thead th:first-child a.btn-info')->eq(0)->link();
+        $crawler = $this->client->click($link);
+
+        // La première ligne doit être "Bases de Python"
+        $this->assertEquals('Bases de Python', $this->getPremierTitre($crawler));
+
+        // Clic sur le lien miniature (image de la formation)
+        $link = $crawler->filter('tbody tr:first-child a')->first()->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertResponseIsSuccessful();
+        // La page de détail doit afficher le titre de la formation
+        $this->assertStringContainsString('Bases de Python', $crawler->filter('h4.text-info')->text());
+    }
+
+    public function testPageDetailFormationAffichePlaylist(): void
+    {
+        $crawler = $this->client->request('GET', '/formations');
+        $link = $crawler->filter('thead th:first-child a.btn-info')->eq(0)->link();
+        $crawler = $this->client->click($link);
+
+        $link = $crawler->filter('tbody tr:first-child a')->first()->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertResponseIsSuccessful();
+        // La page de détail doit afficher la playlist associée
+        $this->assertStringContainsString('Débutants Python', $crawler->html());
+    }
 }

@@ -149,4 +149,39 @@ class PlaylistsTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertCount(2, $crawler->filter('tbody tr'));
     }
+
+    // ─── LIENS ET BOUTONS ────────────────────────────────────────────────────
+
+    public function testBoutonVoirDetailOuvrePagePlaylist(): void
+    {
+        // Tri par nom ASC pour avoir "Algorithmes" en première ligne
+        $crawler = $this->client->request('GET', '/playlists');
+        $link = $crawler->filter('thead th:first-child a.btn-info')->eq(0)->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertEquals('Algorithmes', $this->getPremierNom($crawler));
+
+        // Clic sur "Voir détail" de la première ligne
+        $link = $crawler->filter('tbody tr:first-child a.btn-secondary')->first()->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertResponseIsSuccessful();
+        // La page de détail de la playlist doit afficher son nom
+        $this->assertStringContainsString('Algorithmes', $crawler->html());
+    }
+
+    public function testPageDetailPlaylistAfficheFormationsAssociees(): void
+    {
+        $crawler = $this->client->request('GET', '/playlists');
+        $link = $crawler->filter('thead th:first-child a.btn-info')->eq(0)->link();
+        $crawler = $this->client->click($link);
+
+        $link = $crawler->filter('tbody tr:first-child a.btn-secondary')->first()->link();
+        $crawler = $this->client->click($link);
+
+        $this->assertResponseIsSuccessful();
+        // Algorithmes a 2 formations → les deux doivent apparaître dans le détail
+        $this->assertStringContainsString('Eclipse PHP', $crawler->html());
+        $this->assertStringContainsString('Symfony avancé', $crawler->html());
+    }
 }
