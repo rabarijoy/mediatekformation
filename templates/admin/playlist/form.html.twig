@@ -1,0 +1,55 @@
+{% extends "baseadmin.html.twig" %}
+{% block title %}Admin - {{ playlist.id ? 'Modifier' : 'Nouvelle' }} playlist{% endblock %}
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">{{ playlist.id ? 'Modifier la playlist' : 'Nouvelle playlist' }}</h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ form_label(field, null, {'label_attr': {'class': 'form-label fw-semibold'}}) }}
+                            {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(field) }}
+                        </div>
+                    {% endfor %}
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <a href="{{ path('admin_playlists') }}" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            {% if playlist.id and formations is defined and formations|length > 0 %}
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0">Formations associées (lecture seule)</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-striped mb-0">
+                            <caption class="visually-hidden">Formations de la playlist</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Titre</th>
+                                    <th scope="col">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for formation in formations %}
+                                    <tr>
+                                        <td>{{ formation.title }}</td>
+                                        <td>{{ formation.publishedatstring }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
