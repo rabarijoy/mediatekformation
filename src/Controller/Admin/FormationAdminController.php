@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Contrôleur admin des formations.
  * Même logique de tri et filtrage que le front office, avec les mêmes paramètres GET.
  */
-#[Route('/admin')]
+#[Route('/formations')]
 class FormationAdminController extends AbstractController
 {
     private const FORMATIONS_TEMPLATE = 'admin/formation/index.html.twig';
@@ -27,7 +27,7 @@ class FormationAdminController extends AbstractController
     ) {
     }
 
-    #[Route('/formations', name: 'admin_formations', methods: ['GET'])]
+    #[Route('/admin', name: 'admin_formations', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $categories = $this->categorieRepository->findAll();
@@ -68,7 +68,7 @@ class FormationAdminController extends AbstractController
 
     private const FORM_TEMPLATE = 'admin/formation/form.html.twig';
 
-    #[Route('/formations/new', name: 'admin_formation_new', methods: ['GET', 'POST'])]
+    #[Route('/admin/new', name: 'admin_formation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $formation = new Formation();
@@ -88,7 +88,7 @@ class FormationAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/formations/{id}/edit', name: 'admin_formation_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[Route('/admin/{id}/edit', name: 'admin_formation_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
         $formation = $this->formationRepository->find($id);
@@ -111,7 +111,7 @@ class FormationAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/formations/{id}/delete', name: 'admin_formation_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/admin/{id}/delete', name: 'admin_formation_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
         $formation = $this->formationRepository->find($id);
