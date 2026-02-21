@@ -40,6 +40,11 @@ class CategorieAdminController extends AbstractController
             return $this->redirectToRoute('admin_categories');
         }
 
+        if ($this->categorieRepository->findOneBy(['name' => $name]) !== null) {
+            $this->addFlash('error', 'Cette catégorie existe déjà.');
+            return $this->redirectToRoute('admin_categories');
+        }
+
         $categorie = new Categorie();
         $categorie->setName($name);
         $entityManager->persist($categorie);
