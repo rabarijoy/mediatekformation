@@ -41,15 +41,15 @@ class PlaylistAdminController extends AbstractController
             ]);
         }
 
-        if ($ordre === 'nombreformations') {
-            $playlists = $this->playlistRepository->findAllOrderByNombreFormations('ASC');
+        if ($champ === 'nombreformations' && in_array($ordre, ['ASC', 'DESC'], true)) {
+            $playlists = $this->playlistRepository->findAllOrderByNombreFormations($ordre);
             return $this->render(self::PLAYLISTS_TEMPLATE, [
                 'playlists'  => $playlists,
                 'categories' => $categories,
             ]);
         }
 
-        if ($champ !== '' && $ordre !== '' && in_array($ordre, ['ASC', 'DESC'], true)) {
+        if ($champ !== '' && in_array($ordre, ['ASC', 'DESC'], true)) {
             $playlists = $this->playlistRepository->findAllOrderByName($ordre);
             return $this->render(self::PLAYLISTS_TEMPLATE, [
                 'playlists'  => $playlists,
