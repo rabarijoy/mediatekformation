@@ -21,12 +21,21 @@ class FormationAdminController extends AbstractController
 {
     private const FORMATIONS_TEMPLATE = 'admin/formation/index.html.twig';
 
+    /**
+     * @param FormationRepository $formationRepository
+     * @param CategorieRepository $categorieRepository
+     */
     public function __construct(
         private readonly FormationRepository $formationRepository,
         private readonly CategorieRepository $categorieRepository
     ) {
     }
 
+    /**
+     * Affiche la liste des formations avec filtrage et tri optionnels.
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/admin', name: 'admin_formations', methods: ['GET'])]
     public function index(Request $request): Response
     {
@@ -68,6 +77,12 @@ class FormationAdminController extends AbstractController
 
     private const FORM_TEMPLATE = 'admin/formation/form.html.twig';
 
+    /**
+     * Crée une nouvelle formation.
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/admin/new', name: 'admin_formation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -88,6 +103,13 @@ class FormationAdminController extends AbstractController
         ]);
     }
 
+    /**
+     * Modifie une formation existante.
+     * @param Request $request
+     * @param int $id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/admin/{id}/edit', name: 'admin_formation_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
@@ -111,6 +133,13 @@ class FormationAdminController extends AbstractController
         ]);
     }
 
+    /**
+     * Supprime une formation.
+     * @param int $id
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/admin/{id}/delete', name: 'admin_formation_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): Response
     {

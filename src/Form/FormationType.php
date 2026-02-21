@@ -15,8 +15,17 @@ use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
+/**
+ * Formulaire de création et modification d'une formation.
+ */
 class FormationType extends AbstractType
 {
+    /**
+     * Construit le formulaire de la formation.
+     * @param FormBuilderInterface $builder
+     * @param array<string, mixed> $options
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -57,6 +66,11 @@ class FormationType extends AbstractType
         ;
     }
 
+    /**
+     * Configure les options du formulaire.
+     * @param OptionsResolver $resolver
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

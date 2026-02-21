@@ -10,8 +10,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Formulaire de création et modification d'une playlist.
+ */
 class PlaylistType extends AbstractType
 {
+    /**
+     * Construit le formulaire de la playlist.
+     * @param FormBuilderInterface $builder
+     * @param array<string, mixed> $options
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -28,6 +37,11 @@ class PlaylistType extends AbstractType
         ;
     }
 
+    /**
+     * Configure les options du formulaire.
+     * @param OptionsResolver $resolver
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

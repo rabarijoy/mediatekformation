@@ -16,6 +16,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 )]
 class CreateAdminCommand extends Command
 {
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param UserPasswordHasherInterface $passwordHasher
+     */
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly UserPasswordHasherInterface $passwordHasher
@@ -23,6 +27,12 @@ class CreateAdminCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * Crée un utilisateur administrateur en base de données.
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $user = new User();

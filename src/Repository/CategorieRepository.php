@@ -16,12 +16,22 @@ class CategorieRepository extends ServiceEntityRepository
         parent::__construct($registry, Categorie::class);
     }
 
+    /**
+     * Persiste une catégorie en base de données.
+     * @param Categorie $entity
+     * @return void
+     */
     public function add(Categorie $entity): void
     {
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Supprime une catégorie de la base de données.
+     * @param Categorie $entity
+     * @return void
+     */
     public function remove(Categorie $entity): void
     {
         $this->getEntityManager()->remove($entity);
@@ -30,8 +40,8 @@ class CategorieRepository extends ServiceEntityRepository
 
     /**
      * Retourne la liste des catégories des formations d'une playlist
-     * @param type $idPlaylist
-     * @return array
+     * @param int $idPlaylist
+     * @return Categorie[]
      */
     public function findAllForOnePlaylist($idPlaylist): array
     {
