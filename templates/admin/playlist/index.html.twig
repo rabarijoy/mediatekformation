@@ -1,6 +1,12 @@
 {% extends "baseadmin.html.twig" %}
 {% block title %}Admin - Playlists{% endblock %}
 {% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
     <p class="mb-3">
         <a href="{{ path('admin_playlist_new') }}" class="btn btn-primary">Ajouter une playlist</a>
     </p>

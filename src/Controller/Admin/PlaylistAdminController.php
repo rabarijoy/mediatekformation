@@ -2,8 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Playlist;
 use App\Repository\CategorieRepository;
 use App\Repository\PlaylistRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,5 +64,30 @@ class PlaylistAdminController extends AbstractController
             'playlists'  => $playlists,
             'categories' => $categories,
         ]);
+    }
+
+    #[Route('/playlists/{id}/delete', name: 'admin_playlist_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $playlist = $this->playlistRepository->find($id);
+        if (!$playlist instanceof Playlist) {
+            throw $this->createNotFoundException('Playlist non trouvée.');
+        }
+
+        if (!$this->isCsrfTokenValid('playlist_delete_' . $id, $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('admin_playlists');
+        }
+
+        if ($playlist->getFormations()->count() > 0) {
+            $this->addFlash('error', 'Impossible de supprimer cette playlist : elle contient des formations.');
+            return $this->redirectToRoute('admin_playlists');
+        }
+
+        $entityManager->remove($playlist);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Playlist supprimée.');
+        return $this->redirectToRoute('admin_playlists');
     }
 }
