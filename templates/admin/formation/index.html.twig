@@ -2,6 +2,9 @@
 {% block title %}Admin - Formations{% endblock %}
 {% block body %}
     <h1 class="mb-4">Formations (admin)</h1>
+    <p class="mb-3">
+        <a href="{{ path('admin_formation_new') }}" class="btn btn-primary">Nouvelle formation</a>
+    </p>
     <table class="table table-striped">
         <caption class="visually-hidden">Liste des formations</caption>
         <thead>

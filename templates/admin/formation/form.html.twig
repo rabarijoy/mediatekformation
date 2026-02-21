@@ -1,0 +1,13 @@
+{% extends "base.html.twig" %}
+{% block title %}Admin - {{ formation.id ? 'Modifier' : 'Nouvelle' }} formation{% endblock %}
+{% block body %}
+    <h1 class="mb-4">{{ formation.id ? 'Modifier' : 'Nouvelle' }} formation</h1>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ path('admin_formations') }}" class="btn btn-outline-secondary">Annuler</a>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

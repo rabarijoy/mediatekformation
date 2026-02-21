@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Formation;
+use App\Form\FormationType;
 use App\Repository\CategorieRepository;
 use App\Repository\FormationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -65,10 +66,49 @@ class FormationAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/formations/{id}/edit', name: 'admin_formation_edit', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function edit(int $id): Response
+    private const FORM_TEMPLATE = 'admin/formation/form.html.twig';
+
+    #[Route('/formations/new', name: 'admin_formation_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        return $this->redirectToRoute('admin_formations');
+        $formation = new Formation();
+        $form = $this->createForm(FormationType::class, $formation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($formation);
+            $entityManager->flush();
+            $this->addFlash('success', 'Formation créée.');
+            return $this->redirectToRoute('admin_formations');
+        }
+
+        return $this->render(self::FORM_TEMPLATE, [
+            'formation' => $formation,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/formations/{id}/edit', name: 'admin_formation_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function edit(Request $request, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $formation = $this->formationRepository->find($id);
+        if (!$formation instanceof Formation) {
+            throw $this->createNotFoundException('Formation non trouvée.');
+        }
+
+        $form = $this->createForm(FormationType::class, $formation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            $this->addFlash('success', 'Formation modifiée.');
+            return $this->redirectToRoute('admin_formations');
+        }
+
+        return $this->render(self::FORM_TEMPLATE, [
+            'formation' => $formation,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/formations/{id}/delete', name: 'admin_formation_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
