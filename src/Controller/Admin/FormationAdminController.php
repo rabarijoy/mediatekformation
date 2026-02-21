@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Formation;
 use App\Repository\CategorieRepository;
 use App\Repository\FormationRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -71,7 +72,7 @@ class FormationAdminController extends AbstractController
     }
 
     #[Route('/formations/{id}/delete', name: 'admin_formation_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function delete(int $id, Request $request): Response
+    public function delete(int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
         $formation = $this->formationRepository->find($id);
         if (!$formation instanceof Formation) {
@@ -81,7 +82,15 @@ class FormationAdminController extends AbstractController
             $this->addFlash('error', 'Token CSRF invalide.');
             return $this->redirectToRoute('admin_formations');
         }
-        $this->formationRepository->remove($formation);
+
+        $playlist = $formation->getPlaylist();
+        if ($playlist !== null) {
+            $playlist->removeFormation($formation);
+        }
+
+        $entityManager->remove($formation);
+        $entityManager->flush();
+
         $this->addFlash('success', 'Formation supprimée.');
         return $this->redirectToRoute('admin_formations');
     }
