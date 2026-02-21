@@ -53,4 +53,29 @@ class CategorieAdminController extends AbstractController
         $this->addFlash('success', 'Catégorie ajoutée.');
         return $this->redirectToRoute('admin_categories');
     }
+
+    #[Route('/categories/{id}/delete', name: 'admin_categorie_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function delete(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $categorie = $this->categorieRepository->find($id);
+        if ($categorie === null) {
+            throw $this->createNotFoundException('Catégorie non trouvée.');
+        }
+
+        if (!$this->isCsrfTokenValid('categorie_delete_' . $id, $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('admin_categories');
+        }
+
+        if ($categorie->getFormations()->count() > 0) {
+            $this->addFlash('error', 'Impossible de supprimer cette catégorie : elle est rattachée à des formations.');
+            return $this->redirectToRoute('admin_categories');
+        }
+
+        $entityManager->remove($categorie);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Catégorie supprimée.');
+        return $this->redirectToRoute('admin_categories');
+    }
 }
