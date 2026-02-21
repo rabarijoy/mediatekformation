@@ -8,33 +8,36 @@
             <tr>
                 <th class="text-left align-top" scope="col">
                     formation<br />
-                    <a href="{{ path('admin_formations_sort', {champ:'title', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
-                    <a href="{{ path('admin_formations_sort', {champ:'title', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
-                    <form class="form-inline mt-1" method="POST" action="{{ path('admin_formations_findallcontain', {champ:'title'}) }}">
+                    <a href="{{ path('admin_formations', {champ:'title', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
+                    <a href="{{ path('admin_formations', {champ:'title', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
+                    <form class="form-inline mt-1" method="GET" action="{{ path('admin_formations') }}">
                         <div class="form-group mr-1 mb-2">
                             <input type="text" class="sm" name="recherche"
                                    value="{% if valeur|default and not table|default %}{{ valeur }}{% endif %}">
-                            <input type="hidden" name="_token" value="{{ csrf_token('filtre_title') }}">
+                            <input type="hidden" name="champ" value="title">
                             <button type="submit" class="btn btn-info mb-2 btn-sm">filtrer</button>
                         </div>
                     </form>
                 </th>
                 <th class="text-left align-top" scope="col">
                     playlist<br />
-                    <a href="{{ path('admin_formations_sort', {table:'playlist', champ:'name', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
-                    <a href="{{ path('admin_formations_sort', {table:'playlist', champ:'name', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
-                    <form class="form-inline mt-1" method="POST" action="{{ path('admin_formations_findallcontain', {champ:'name', table:'playlist'}) }}">
+                    <a href="{{ path('admin_formations', {table:'playlist', champ:'name', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
+                    <a href="{{ path('admin_formations', {table:'playlist', champ:'name', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
+                    <form class="form-inline mt-1" method="GET" action="{{ path('admin_formations') }}">
                         <div class="form-group mr-1 mb-2">
                             <input type="text" class="sm" name="recherche"
                                    value="{% if valeur|default and table|default and table=='playlist' %}{{ valeur }}{% endif %}">
-                            <input type="hidden" name="_token" value="{{ csrf_token('filtre_name') }}">
+                            <input type="hidden" name="champ" value="name">
+                            <input type="hidden" name="table" value="playlist">
                             <button type="submit" class="btn btn-info mb-2 btn-sm">filtrer</button>
                         </div>
                     </form>
                 </th>
                 <th class="text-left align-top" scope="col">
                     catégories
-                    <form class="form-inline mt-1" method="POST" action="{{ path('admin_formations_findallcontain', {champ:'id', table:'categories'}) }}">
+                    <form class="form-inline mt-1" method="GET" action="{{ path('admin_formations') }}">
+                        <input type="hidden" name="champ" value="id">
+                        <input type="hidden" name="table" value="categories">
                         <select class="form-select form-select-sm" name="recherche" id="recherche" onchange="this.form.submit()">
                             <option value=""></option>
                             {% for categorie in categories %}
@@ -49,8 +52,8 @@
                 </th>
                 <th class="text-center align-top" scope="col">
                     date<br />
-                    <a href="{{ path('admin_formations_sort', {champ:'publishedAt', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
-                    <a href="{{ path('admin_formations_sort', {champ:'publishedAt', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
+                    <a href="{{ path('admin_formations', {champ:'publishedAt', ordre:'ASC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true"><</a>
+                    <a href="{{ path('admin_formations', {champ:'publishedAt', ordre:'DESC'}) }}" class="btn btn-info btn-sm active" role="button" aria-pressed="true">></a>
                 </th>
                 <th class="text-center align-top" scope="col">
                     &nbsp;
