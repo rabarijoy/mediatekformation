@@ -1,0 +1,51 @@
+{% extends "baseadmin.html.twig" %}
+{% block title %}Admin - Catégories{% endblock %}
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Ajouter une catégorie</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ path('admin_categorie_add') }}" class="d-flex gap-2 align-items-end">
+                <div class="flex-grow-1">
+                    <label for="name" class="form-label fw-semibold">Nom</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary mb-0">Ajouter</button>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <caption class="visually-hidden">Liste des catégories</caption>
+        <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col" class="text-center">Nb formations</th>
+                <th scope="col" class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categorie in categories %}
+                <tr class="align-middle">
+                    <td>{{ categorie.name }}</td>
+                    <td class="text-center">{{ categorie.formations|length }}</td>
+                    <td class="text-center">
+                        <form method="post" action="{{ path('admin_categorie_delete', {id: categorie.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('categorie_delete_' ~ categorie.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Confirmer la suppression ?');">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
