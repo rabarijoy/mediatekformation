@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Playlist;
+use App\Form\PlaylistType;
 use App\Repository\CategorieRepository;
 use App\Repository\PlaylistRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -63,6 +64,52 @@ class PlaylistAdminController extends AbstractController
         return $this->render(self::PLAYLISTS_TEMPLATE, [
             'playlists'  => $playlists,
             'categories' => $categories,
+        ]);
+    }
+
+    private const FORM_TEMPLATE = 'admin/playlist/form.html.twig';
+
+    #[Route('/playlists/new', name: 'admin_playlist_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $playlist = new Playlist();
+        $form = $this->createForm(PlaylistType::class, $playlist);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($playlist);
+            $entityManager->flush();
+            $this->addFlash('success', 'Playlist créée.');
+            return $this->redirectToRoute('admin_playlists');
+        }
+
+        return $this->render(self::FORM_TEMPLATE, [
+            'playlist' => $playlist,
+            'form'     => $form,
+        ]);
+    }
+
+    #[Route('/playlists/{id}/edit', name: 'admin_playlist_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    public function edit(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $playlist = $this->playlistRepository->find($id);
+        if (!$playlist instanceof Playlist) {
+            throw $this->createNotFoundException('Playlist non trouvée.');
+        }
+
+        $form = $this->createForm(PlaylistType::class, $playlist);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            $this->addFlash('success', 'Playlist modifiée.');
+            return $this->redirectToRoute('admin_playlists');
+        }
+
+        return $this->render(self::FORM_TEMPLATE, [
+            'playlist'   => $playlist,
+            'form'       => $form,
+            'formations' => $playlist->getFormations(),
         ]);
     }
 
