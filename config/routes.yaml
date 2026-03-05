@@ -3,3 +3,28 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+# Redirections 301 des anciennes routes /admin/{ressource} vers /{ressource}/admin
+admin_formations_legacy:
+    path: /admin/formations
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: admin_formations
+        permanent: true
+    methods: [GET]
+
+admin_playlists_legacy:
+    path: /admin/playlists
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: admin_playlists
+        permanent: true
+    methods: [GET]
+
+admin_categories_legacy:
+    path: /admin/categories
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: admin_categories
+        permanent: true
+    methods: [GET]
