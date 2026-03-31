@@ -53,23 +53,7 @@ jobs:
             --no-scripts
 
       # ------------------------------------------------------------------
-      # 5. Préchauffage du cache Symfony en mode production
-      # Le .env est absent du dépôt (gitignored), on en crée un minimal
-      # pour que bin/console puisse démarrer (pas de DB nécessaire ici).
-      # ------------------------------------------------------------------
-      - name: Warm up Symfony cache (prod)
-        run: |
-          echo "APP_ENV=prod" > .env
-          echo "APP_SECRET=${{ secrets.APP_SECRET }}" >> .env
-          echo "DATABASE_URL=mysql://placeholder:placeholder@127.0.0.1:3306/placeholder" >> .env
-          php bin/console cache:clear --env=prod --no-warmup
-          php bin/console cache:warmup --env=prod
-        env:
-          APP_ENV: prod
-          APP_SECRET: ${{ secrets.APP_SECRET }}
-
-      # ------------------------------------------------------------------
-      # 7. Déploiement FTP vers le serveur de production
+      # 5. Déploiement FTP vers le serveur de production
       # ------------------------------------------------------------------
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
