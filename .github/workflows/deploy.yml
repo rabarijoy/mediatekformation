@@ -53,18 +53,7 @@ jobs:
             --no-scripts
 
       # ------------------------------------------------------------------
-      # 5. Compilation des assets (Asset Mapper / Importmap)
-      # ------------------------------------------------------------------
-      - name: Compile assets
-        run: |
-          php bin/console importmap:install --env=prod
-          php bin/console asset-map:compile --env=prod
-        env:
-          APP_ENV: prod
-          APP_SECRET: ${{ secrets.APP_SECRET }}
-
-      # ------------------------------------------------------------------
-      # 6. Préchauffage du cache Symfony en mode production
+      # 5. Préchauffage du cache Symfony en mode production
       # ------------------------------------------------------------------
       - name: Warm up Symfony cache (prod)
         run: |
