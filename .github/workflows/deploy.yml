@@ -49,7 +49,8 @@ jobs:
             --no-dev \
             --no-interaction \
             --prefer-dist \
-            --optimize-autoloader
+            --optimize-autoloader \
+            --no-scripts
 
       # ------------------------------------------------------------------
       # 5. Compilation des assets (Asset Mapper / Importmap)
