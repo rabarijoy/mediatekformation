@@ -84,12 +84,11 @@ jobs:
           set ssl:verify-certificate false
           set net:timeout 30
           set net:max-retries 3
-          mirror --reverse --delete --verbose \
+          mirror --reverse --ignore-time --verbose \
             --exclude-glob .git/ \
             --exclude-glob .github/ \
             --exclude-glob vendor/ \
-            --exclude-glob var/cache/ \
-            --exclude-glob var/log/ \
+            --exclude-glob var/ \
             --exclude-glob tests/ \
             --exclude-glob node_modules/ \
             --exclude-glob backups/ \
