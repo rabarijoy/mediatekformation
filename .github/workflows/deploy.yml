@@ -1,0 +1,100 @@
+name: Deploy to production (FTP)
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Build & deploy Symfony app
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------------------
+      # 1. Récupération du code source
+      # ------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # historique complet requis par FTP-Deploy-Action
+
+      # ------------------------------------------------------------------
+      # 2. Installation de PHP
+      # ------------------------------------------------------------------
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          extensions: ctype, iconv, intl, pdo_mysql
+          coverage: none
+
+      # ------------------------------------------------------------------
+      # 3. Cache des dépendances Composer
+      # ------------------------------------------------------------------
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      # ------------------------------------------------------------------
+      # 4. Installation des dépendances PHP (mode production)
+      # ------------------------------------------------------------------
+      - name: Install Composer dependencies (production)
+        run: |
+          composer install \
+            --no-dev \
+            --no-interaction \
+            --prefer-dist \
+            --optimize-autoloader
+
+      # ------------------------------------------------------------------
+      # 5. Compilation des assets (Asset Mapper / Importmap)
+      # ------------------------------------------------------------------
+      - name: Compile assets
+        run: |
+          php bin/console importmap:install --env=prod
+          php bin/console asset-map:compile --env=prod
+        env:
+          APP_ENV: prod
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+
+      # ------------------------------------------------------------------
+      # 6. Préchauffage du cache Symfony en mode production
+      # ------------------------------------------------------------------
+      - name: Warm up Symfony cache (prod)
+        run: |
+          php bin/console cache:clear --env=prod --no-warmup
+          php bin/console cache:warmup --env=prod
+        env:
+          APP_ENV: prod
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+
+      # ------------------------------------------------------------------
+      # 7. Déploiement FTP vers le serveur de production
+      # ------------------------------------------------------------------
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server:   ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /
+          # Dossiers et fichiers exclus du transfert
+          exclude: |
+            **/.git/**
+            **/.github/**
+            **/var/cache/**
+            **/var/log/**
+            **/tests/**
+            **/node_modules/**
+            **/.env.local
+            **/.env.*.local
+            **/phpunit.xml.dist
+            **/phpDocumentor.phar
+            **/Suivi/**
+            **/backups/**
