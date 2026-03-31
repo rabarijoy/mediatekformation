@@ -53,7 +53,26 @@ jobs:
             --no-scripts
 
       # ------------------------------------------------------------------
-      # 5. Déploiement FTP vers le serveur de production
+      # 5. Diagnostic connexion FTP (à supprimer une fois le CI stable)
+      # ------------------------------------------------------------------
+      - name: Debug FTP connection
+        env:
+          FTP_SERVER:   ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          echo "FTP_SERVER   length: ${#FTP_SERVER}"
+          echo "FTP_USERNAME length: ${#FTP_USERNAME}"
+          echo "FTP_PASSWORD length: ${#FTP_PASSWORD}"
+          echo "--- curl FTP connection test ---"
+          curl --verbose \
+               --ftp-ssl \
+               --user "$FTP_USERNAME:$FTP_PASSWORD" \
+               "ftp://$FTP_SERVER/" \
+               --list-only 2>&1 | grep -v "^* password" || true
+
+      # ------------------------------------------------------------------
+      # 6. Déploiement FTP vers le serveur de production
       # ------------------------------------------------------------------
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
