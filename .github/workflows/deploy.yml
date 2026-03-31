@@ -79,10 +79,13 @@ jobs:
             --exclude-glob node_modules/ \
             --exclude-glob backups/ \
             --exclude-glob Suivi/ \
+            --exclude-glob .phpdoc/ \
+            --exclude-glob nbproject/ \
             --exclude .env \
             --exclude .env.local \
             --exclude phpunit.xml.dist \
             --exclude phpDocumentor.phar \
+            --exclude .phpunit.result.cache \
             . /
           bye
           EOF
