@@ -23,3 +23,12 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+# Suivi personnel (non versionné)
+Suivi/
+
+# Variables d'environnement (secrets de production)
+/.env
+
+# Sauvegardes de base de données
+/backups/
