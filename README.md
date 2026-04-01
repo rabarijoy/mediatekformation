@@ -19,8 +19,6 @@ La base de données exploitée par le site est au format **MySQL**.
 Voici le schéma correspondant à la BDD.<br>
 ![img7](https://github.com/user-attachments/assets/f3eca694-bf96-4f6f-811e-9d11a7925e9e)
 
-`video_id` contient le code YouTube de la vidéo, qui permet ensuite de lancer la vidéo à l’adresse suivante :<br>
-https://www.youtube.com/embed/<<<video_id>>>
 
 ### Relations issues du schéma
 
@@ -46,7 +44,7 @@ Le chemin des images (des 2 tailles) n’est pas mémorisé dans la BDD car il p
 ## Tester l’application en ligne
 
 - **Site public :** [https://mediatek.apiqa.mg](https://mediatek.apiqa.mg)
-- **Documentation technique (PhpDocumentor) :** [https://mediatek.apiqa.mg/docs/](https://mediatek.apiqa.mg/docs/)
+- **Documentation technique (PhpDocumentor) :** [Documentation PHPDoc](rabarijoy.github.io/mediatekformation-docs)
 
 Aucun identifiant ni mot de passe ne doit être communiqué via ce dépôt ; utilisez les comptes et procédures qui vous sont fournis séparément pour les tests sur l’environnement distant.
 
