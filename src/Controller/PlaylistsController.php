@@ -1,9 +1,12 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Inscription;
 use App\Repository\CategorieRepository;
 use App\Repository\FormationRepository;
+use App\Repository\InscriptionRepository;
 use App\Repository\PlaylistRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,37 +21,24 @@ class PlaylistsController extends AbstractController
 {
     private const PLAYLISTS_TEMPLATE = 'pages/playlists.html.twig';
 
-    /**
-     *
-     * @var PlaylistRepository
-     */
     private $playlistRepository;
-
-    /**
-     *
-     * @var FormationRepository
-     */
     private $formationRepository;
-
-    /**
-     *
-     * @var CategorieRepository
-     */
     private $categorieRepository;
+    private $inscriptionRepository;
+    private $entityManager;
 
-    /**
-     * @param PlaylistRepository $playlistRepository
-     * @param CategorieRepository $categorieRepository
-     * @param FormationRepository $formationRespository
-     */
     public function __construct(
         PlaylistRepository $playlistRepository,
         CategorieRepository $categorieRepository,
-        FormationRepository $formationRespository
+        FormationRepository $formationRespository,
+        InscriptionRepository $inscriptionRepository,
+        EntityManagerInterface $entityManager
     ) {
         $this->playlistRepository = $playlistRepository;
         $this->categorieRepository = $categorieRepository;
         $this->formationRepository = $formationRespository;
+        $this->inscriptionRepository = $inscriptionRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -142,22 +132,55 @@ class PlaylistsController extends AbstractController
         ]);
     }
 
-    /**
-     * Affiche le détail d'une playlist avec ses formations et catégories.
-     * @param int $id
-     * @return Response
-     */
     #[Route('/playlists/playlist/{id}', name: 'playlists.showone')]
     public function showOne($id): Response
     {
         $playlist = $this->playlistRepository->find($id);
         $playlistCategories = $this->categorieRepository->findAllForOnePlaylist($id);
         $playlistFormations = $this->formationRepository->findAllForOnePlaylist($id);
+
+        $inscription = null;
+        if ($this->getUser()) {
+            $inscription = $this->inscriptionRepository->findOneBy([
+                'user' => $this->getUser(),
+                'playlist' => $playlist,
+            ]);
+        }
+
         return $this->render("pages/playlist.html.twig", [
             'playlist' => $playlist,
             'playlistcategories' => $playlistCategories,
-            'playlistformations' => $playlistFormations
+            'playlistformations' => $playlistFormations,
+            'inscription' => $inscription,
         ]);
+    }
+
+    #[Route('/playlists/playlist/{id}/inscrire', name: 'playlists.inscrire', methods: ['POST'])]
+    public function inscrire(int $id): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $playlist = $this->playlistRepository->find($id);
+        if (!$playlist) {
+            throw $this->createNotFoundException('Playlist introuvable.');
+        }
+
+        // Vérifie l'unicité avant persist (double protection avec la contrainte UNIQUE BDD)
+        $existante = $this->inscriptionRepository->findOneBy([
+            'user' => $this->getUser(),
+            'playlist' => $playlist,
+        ]);
+
+        if (!$existante) {
+            $inscription = new Inscription();
+            $inscription->setUser($this->getUser());
+            $inscription->setPlaylist($playlist);
+            $this->entityManager->persist($inscription);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Inscription enregistrée.');
+        }
+
+        return $this->redirectToRoute('playlists.showone', ['id' => $id]);
     }
 
 }

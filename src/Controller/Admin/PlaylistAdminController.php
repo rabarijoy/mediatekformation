@@ -2,9 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Inscription;
 use App\Entity\Playlist;
+use App\Form\InscriptionNoteType;
 use App\Form\PlaylistType;
 use App\Repository\CategorieRepository;
+use App\Repository\InscriptionRepository;
 use App\Repository\PlaylistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +29,8 @@ class PlaylistAdminController extends AbstractController
      */
     public function __construct(
         private readonly PlaylistRepository $playlistRepository,
-        private readonly CategorieRepository $categorieRepository
+        private readonly CategorieRepository $categorieRepository,
+        private readonly InscriptionRepository $inscriptionRepository
     ) {
     }
 
@@ -168,5 +172,52 @@ class PlaylistAdminController extends AbstractController
 
         $this->addFlash('success', 'Playlist supprimée.');
         return $this->redirectToRoute('admin_playlists');
+    }
+
+    #[Route('/admin/{id}/inscrits', name: 'admin_playlist_inscrits', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function inscrits(int $id): Response
+    {
+        $playlist = $this->playlistRepository->find($id);
+        if (!$playlist instanceof Playlist) {
+            throw $this->createNotFoundException('Playlist non trouvée.');
+        }
+
+        $inscriptions = $this->inscriptionRepository->findBy(['playlist' => $playlist]);
+
+        // Prépare un formulaire de note par inscription
+        $forms = [];
+        foreach ($inscriptions as $inscription) {
+            $forms[$inscription->getId()] = $this->createForm(InscriptionNoteType::class, $inscription, [
+                'action' => $this->generateUrl('admin_inscription_note', ['id' => $inscription->getId()]),
+                'method' => 'POST',
+            ])->createView();
+        }
+
+        return $this->render('admin/playlist/inscrits.html.twig', [
+            'playlist' => $playlist,
+            'inscriptions' => $inscriptions,
+            'forms' => $forms,
+        ]);
+    }
+
+    #[Route('/admin/inscription/{id}/note', name: 'admin_inscription_note', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function note(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $inscription = $this->inscriptionRepository->find($id);
+        if (!$inscription instanceof Inscription) {
+            throw $this->createNotFoundException('Inscription non trouvée.');
+        }
+
+        $form = $this->createForm(InscriptionNoteType::class, $inscription);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            $this->addFlash('success', 'Note enregistrée.');
+        } else {
+            $this->addFlash('error', 'Note invalide (doit être entre 0 et 100).');
+        }
+
+        return $this->redirectToRoute('admin_playlist_inscrits', ['id' => $inscription->getPlaylist()->getId()]);
     }
 }

@@ -71,6 +71,7 @@
                         {{ playlist.nombreformations }}
                     </td>
                     <td class="text-center text-nowrap">
+                        <a href="{{ path('admin_playlist_inscrits', {id: playlist.id}) }}" class="btn btn-info btn-sm">Inscrits</a>
                         <a href="{{ path('admin_playlist_edit', {id: playlist.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
                         <form method="post" action="{{ path('admin_playlist_delete', {id: playlist.id}) }}" class="d-inline">
                             <input type="hidden" name="_token" value="{{ csrf_token('playlist_delete_' ~ playlist.id) }}">

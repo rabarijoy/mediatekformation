@@ -1,0 +1,59 @@
+{% extends "baseadmin.html.twig" %}
+{% block title %}Admin – Inscrits : {{ playlist.name }}{% endblock %}
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    <h5 class="mb-3">
+        Inscrits à <strong>{{ playlist.name }}</strong>
+        {% if playlist.seuilReussite is not null %}
+            <span class="badge bg-secondary ms-2">Seuil : {{ playlist.seuilReussite }}/100</span>
+        {% endif %}
+    </h5>
+    <a href="{{ path('admin_playlists') }}" class="btn btn-outline-secondary btn-sm mb-3">← Retour</a>
+
+    {% if inscriptions is empty %}
+        <p class="text-muted">Aucun inscrit pour le moment.</p>
+    {% else %}
+        <table class="table table-striped">
+            <caption class="visually-hidden">Liste des inscrits</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Utilisateur</th>
+                    <th scope="col">Date inscription</th>
+                    <th scope="col">Note</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Attribuer une note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inscription in inscriptions %}
+                    <tr class="align-middle">
+                        <td>{{ inscription.user.email }}</td>
+                        <td>{{ inscription.dateInscription|date('d/m/Y') }}</td>
+                        <td>{{ inscription.note is not null ? inscription.note ~ '/100' : '—' }}</td>
+                        <td>
+                            <span class="badge
+                                {% if inscription.statut == 'Certificat obtenu' %}bg-success
+                                {% elseif inscription.statut == 'Échec' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ inscription.statut }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ form_start(forms[inscription.id], {'attr': {'class': 'd-flex gap-2 align-items-center', 'novalidate': 'novalidate'}}) }}
+                                {{ form_widget(forms[inscription.id].note, {'attr': {'class': 'form-control form-control-sm', 'style': 'width:90px'}}) }}
+                                {{ form_errors(forms[inscription.id].note) }}
+                                <button type="submit" class="btn btn-sm btn-primary">Enregistrer</button>
+                            {{ form_end(forms[inscription.id]) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

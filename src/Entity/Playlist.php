@@ -34,15 +34,15 @@ class Playlist
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $seuilReussite = null;
+
     /**
      * @var Collection<int, Formation>
      */
     #[ORM\OneToMany(targetEntity: Formation::class, mappedBy: 'playlist')]
     private Collection $formations;
 
-    /**
-     * Initialise la collection de formations.
-     */
     public function __construct()
     {
         $this->formations = new ArrayCollection();
@@ -153,11 +153,19 @@ class Playlist
         return $categories;
     }
 
-    /**
-     * Retourne le nombre de formations de la playlist.
-     * @return int
-     */
-    public function getNombreFormations() : int
+    public function getSeuilReussite(): ?int
+    {
+        return $this->seuilReussite;
+    }
+
+    public function setSeuilReussite(?int $seuilReussite): static
+    {
+        $this->seuilReussite = $seuilReussite;
+
+        return $this;
+    }
+
+    public function getNombreFormations(): int
     {
         return $this->formations->count();
     }

@@ -1,13 +1,14 @@
 {% extends "basefront.html.twig" %}
 {% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
     <div class="row mt-3">
         <div class="col">
             <h4 class="text-info mt-5">{{ playlist.name }}</h4>
             <strong>catégories : </strong>
-                <!-- boucle pour afficher les catégories -->
-                {% set anccategorie = '' %}
-                {% for playlist in playlistcategories %}
-                    {{ playlist.name }}&nbsp;
+                {% for cat in playlistcategories %}
+                    {{ cat.name }}&nbsp;
                 {% endfor %}
             <br /><br />
             <strong>nombre de formations : </strong>
@@ -15,6 +16,29 @@
             <br /><br />
             <strong>description :</strong><br />
                 {{ playlist.description|nl2br }}
+            <br /><br />
+
+            {# Bloc inscription / statut #}
+            {% if is_granted('ROLE_USER') %}
+                {% if inscription %}
+                    <div class="alert
+                        {% if inscription.statut == 'Certificat obtenu' %}alert-success
+                        {% elseif inscription.statut == 'Échec' %}alert-danger
+                        {% else %}alert-secondary{% endif %}">
+                        <strong>Votre statut :</strong> {{ inscription.statut }}
+                        {% if inscription.note is not null %}
+                            — Note : {{ inscription.note }}/100
+                            {% if playlist.seuilReussite is not null %}
+                                (seuil : {{ playlist.seuilReussite }}/100)
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <form method="post" action="{{ path('playlists.inscrire', {id: playlist.id}) }}">
+                        <button type="submit" class="btn btn-primary">S'inscrire à cette formation</button>
+                    </form>
+                {% endif %}
+            {% endif %}
         </div>
         <div class="col">
             <!-- boucle sur l'affichage des formations -->
