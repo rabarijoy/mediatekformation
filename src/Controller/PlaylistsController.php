@@ -155,6 +155,30 @@ class PlaylistsController extends AbstractController
         ]);
     }
 
+    #[Route('/playlists/playlist/{id}/desinscription', name: 'playlists.desinscription', methods: ['POST'])]
+    public function desinscription(int $id): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $playlist = $this->playlistRepository->find($id);
+        if (!$playlist) {
+            throw $this->createNotFoundException('Playlist introuvable.');
+        }
+
+        $inscription = $this->inscriptionRepository->findOneBy([
+            'user' => $this->getUser(),
+            'playlist' => $playlist,
+        ]);
+
+        if ($inscription) {
+            $this->entityManager->remove($inscription);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Désinscription effectuée.');
+        }
+
+        return $this->redirectToRoute('playlists.showone', ['id' => $id]);
+    }
+
     #[Route('/playlists/playlist/{id}/inscrire', name: 'playlists.inscrire', methods: ['POST'])]
     public function inscrire(int $id): Response
     {

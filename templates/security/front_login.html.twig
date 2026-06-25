@@ -1,0 +1,99 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Mon compte – MediatekFormation{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+
+            <div class="card shadow-sm">
+                <div class="card-header p-0">
+                    <ul class="nav nav-tabs card-header-tabs" id="compteTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {{ active_tab == 'login' ? 'active' : '' }}"
+                                    id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane"
+                                    type="button" role="tab">
+                                Se connecter
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {{ active_tab == 'register' ? 'active' : '' }}"
+                                    id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane"
+                                    type="button" role="tab">
+                                Créer un compte
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body tab-content" id="compteTabContent">
+
+                    {# ── Onglet connexion ── #}
+                    <div class="tab-pane fade {{ active_tab == 'login' ? 'show active' : '' }}"
+                         id="login-pane" role="tabpanel">
+
+                        {% if error %}
+                            <div class="alert alert-danger mt-2">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        {% endif %}
+
+                        <form method="post" action="{{ path('front_login') }}" class="mt-3">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nom d'utilisateur</label>
+                                <input type="text" id="username" name="username"
+                                       value="{{ last_username }}"
+                                       class="form-control" autocomplete="username" autofocus required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Mot de passe</label>
+                                <input type="password" id="password" name="password"
+                                       class="form-control" autocomplete="current-password" required>
+                            </div>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('front_authenticate') }}">
+                            <div class="d-grid">
+                                <button class="btn btn-primary" type="submit">Se connecter</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {# ── Onglet inscription ── #}
+                    <div class="tab-pane fade {{ active_tab == 'register' ? 'show active' : '' }}"
+                         id="register-pane" role="tabpanel">
+
+                        {% if registration_form %}
+                            {{ form_start(registration_form, {
+                                action: path('front_register'),
+                                method: 'POST',
+                                attr: {novalidate: 'novalidate', class: 'mt-3'}
+                            }) }}
+                                {% for field in registration_form %}
+                                    <div class="mb-3">
+                                        {{ form_label(field, null, {label_attr: {class: 'form-label'}}) }}
+                                        {{ form_widget(field, {attr: {class: 'form-control'}}) }}
+                                        {{ form_errors(field) }}
+                                    </div>
+                                {% endfor %}
+                                <div class="d-grid">
+                                    <button class="btn btn-success" type="submit">Créer mon compte</button>
+                                </div>
+                            {{ form_end(registration_form) }}
+                        {% else %}
+                            <form method="get" action="{{ path('front_register') }}" class="mt-3">
+                                <p class="text-muted">Créez un compte pour vous inscrire aux formations.</p>
+                                <div class="d-grid">
+                                    <button class="btn btn-success" type="submit">Accéder au formulaire</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

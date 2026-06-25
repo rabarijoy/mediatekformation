@@ -18,26 +18,45 @@
                 {{ playlist.description|nl2br }}
             <br /><br />
 
-            {# Bloc inscription / statut #}
+            {# Bloc inscription / statut / désincription #}
             {% if is_granted('ROLE_USER') %}
                 {% if inscription %}
                     <div class="alert
                         {% if inscription.statut == 'Certificat obtenu' %}alert-success
                         {% elseif inscription.statut == 'Échec' %}alert-danger
-                        {% else %}alert-secondary{% endif %}">
-                        <strong>Votre statut :</strong> {{ inscription.statut }}
-                        {% if inscription.note is not null %}
-                            — Note : {{ inscription.note }}/100
-                            {% if playlist.seuilReussite is not null %}
-                                (seuil : {{ playlist.seuilReussite }}/100)
+                        {% else %}alert-secondary{% endif %} d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Votre statut :</strong> {{ inscription.statut }}
+                            {% if inscription.note is not null %}
+                                — Note : {{ inscription.note }}/100
+                                {% if playlist.seuilReussite is not null %}
+                                    (seuil : {{ playlist.seuilReussite }}/100)
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
+                        </div>
+                        <form method="post" action="{{ path('playlists.desinscription', {id: playlist.id}) }}" class="ms-3">
+                            <button type="submit" class="btn btn-outline-danger btn-sm"
+                                    onclick="return confirm('Confirmer la désinscription de cette formation ?');">
+                                Se désinscrire
+                            </button>
+                        </form>
                     </div>
                 {% else %}
                     <form method="post" action="{{ path('playlists.inscrire', {id: playlist.id}) }}">
-                        <button type="submit" class="btn btn-primary">S'inscrire à cette formation</button>
+                        <button type="submit" class="btn btn-primary"
+                                onclick="return confirm('Confirmer votre inscription à la formation « {{ playlist.name }} » ?');">
+                            S'inscrire à cette formation
+                        </button>
                     </form>
                 {% endif %}
+            {% else %}
+                <button type="button" class="btn btn-secondary" disabled
+                        title="Vous devez être connecté pour vous inscrire">
+                    S'inscrire à cette formation
+                </button>
+                <small class="text-muted d-block mt-1">
+                    <a href="{{ path('front_login') }}">Connectez-vous</a> pour vous inscrire.
+                </small>
             {% endif %}
         </div>
         <div class="col">

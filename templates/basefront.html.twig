@@ -20,10 +20,30 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('playlists') }}">Playlists</a>
-                    </li>                    
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if app.user %}
+                        <li class="nav-item">
+                            <span class="navbar-text me-2">
+                                Bienvenue, <strong>{{ app.user.displayName }}</strong>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-secondary btn-sm px-3" href="{{ path('app_logout') }}">
+                                Se déconnecter
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-primary btn-sm px-3" href="{{ path('front_login') }}">
+                                Compte
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
-        </nav>        
+        </nav>
     </div>
 {% endblock %}
 {% block body %}{% endblock %}

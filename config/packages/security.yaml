@@ -4,11 +4,8 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
-            entity:
-                class: App\Entity\User
-                property: email
+            id: App\Security\UserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -16,7 +13,10 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\LoginAuthenticator
+            custom_authenticator:
+                - App\Security\LoginAuthenticator
+                - App\Security\FrontAuthenticator
+            entry_point: App\Security\FrontAuthenticator
             logout:
                 path: app_logout
                 # where to redirect after logout

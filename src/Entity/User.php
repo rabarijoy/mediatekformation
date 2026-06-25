@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -12,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['username'], message: "Ce nom d'utilisateur est déjà utilisé.", ignoreNull: true)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
@@ -22,10 +24,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    /** Nom d'utilisateur pour les comptes front (null pour les admins) */
+    #[ORM\Column(length: 50, nullable: true, unique: true)]
+    private ?string $username = null;
+
     /**
      * @var string|null Adresse e-mail de l'utilisateur
      */
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 180, nullable: true)]
     private ?string $email = null;
 
     /**
@@ -49,35 +55,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    /**
-     * Retourne l'adresse e-mail de l'utilisateur.
-     * @return string|null
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * Définit l'adresse e-mail de l'utilisateur.
-     * @param string $email
-     * @return static
-     */
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
+    /** Nom à afficher : username pour les utilisateurs front, email pour les admins. */
+    public function getDisplayName(): string
+    {
+        return $this->username ?? $this->email ?? 'Utilisateur';
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(?string $username): static
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /** Identifiant unique : email pour les admins, username pour les utilisateurs front. */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string) ($this->email ?? $this->username);
     }
 
     /**
